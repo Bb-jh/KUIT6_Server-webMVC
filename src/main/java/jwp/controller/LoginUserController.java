@@ -25,7 +25,7 @@ public class LoginUserController extends HttpServlet {
 
         HttpSession session = req.getSession();
         session.setAttribute("user", user);
-
+        System.out.println("user 로그인 성공");
         resp.sendRedirect("/");
 //        super.doPost(req, resp);
     }
