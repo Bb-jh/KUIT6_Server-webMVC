@@ -16,6 +16,7 @@ public class LogoutUserController extends HttpServlet {
         HttpSession session = req.getSession();
         if (session != null) {
             session.removeAttribute("user");
+//            session.invalidate();
             System.out.println("user 로그아웃 완료");
         }
 
