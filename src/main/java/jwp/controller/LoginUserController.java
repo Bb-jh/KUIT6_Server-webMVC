@@ -12,9 +12,38 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebServlet("/user/login")
-public class LoginUserController extends HttpServlet {
+public class LoginUserController implements Controller {
     @Override
+    public String process(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String method = req.getMethod();
+        switch (method) {
+            case "GET" -> { return getLoginForm(req, resp); }
+            case "POST" -> { return doLogin(req, resp); }
+            default -> { return ""; }
+        }
+    }
+
+    private String getLoginForm(HttpServletRequest req, HttpServletResponse resp) {
+        return "/user/login.jsp";
+    }
+
+    private String doLogin(HttpServletRequest req, HttpServletResponse resp) {
+        User user = MemoryUserRepository.getInstance().findUserById(req.getParameter("userId"));
+
+        if (user == null || !user.matchPassword(req.getParameter("password"))) {
+            System.out.println("user 로그인 실패");
+            return "redirect:/user/loginFailed.jsp";
+        }
+
+        HttpSession session = req.getSession();
+        session.setAttribute("user", user);
+        System.out.println("user 로그인 성공");
+        return "redirect:/";
+    }
+
+
+
+/*    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         RequestDispatcher rd = req.getRequestDispatcher("/user/login.jsp");
         rd.forward(req, resp);
@@ -35,5 +64,5 @@ public class LoginUserController extends HttpServlet {
         System.out.println("user 로그인 성공");
         resp.sendRedirect("/");
 //        super.doPost(req, resp);
-    }
+    }*/
 }

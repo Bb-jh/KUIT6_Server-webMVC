@@ -8,9 +8,19 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebServlet("/user/logout")
-public class LogoutUserController extends HttpServlet {
+public class LogoutUserController implements Controller {
     @Override
+    public String process(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        if (session != null) {
+            session.removeAttribute("user");
+//            session.invalidate();
+            System.out.println("user 로그아웃 완료");
+        }
+        return "redirect:/";
+    }
+
+/*    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         HttpSession session = req.getSession();
@@ -23,5 +33,5 @@ public class LogoutUserController extends HttpServlet {
         resp.sendRedirect("/");
 
 //        super.doGet(req, resp);
-    }
+    }*/
 }
