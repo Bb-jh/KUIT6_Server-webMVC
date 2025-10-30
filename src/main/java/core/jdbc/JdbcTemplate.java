@@ -1,6 +1,7 @@
 package core.jdbc;
 
 import jwp.model.User;
+import jwp.support.KeyHolder;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,6 +23,24 @@ public class JdbcTemplate<T> {
             throw new RuntimeException(e);
         }
     }
+
+    public void update(String sql, PreparedStatementSetter pstmtSetter, KeyHolder holder) {
+        try (Connection conn = ConnectionManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+
+            pstmtSetter.setParameters(pstmt);
+            pstmt.executeUpdate();
+
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    holder.setId(rs.getInt(1));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public List<T> query(String sql, RowMapper<T> rowMapper) {
         List<T> objects = new ArrayList<>();
