@@ -8,12 +8,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class UserDao {
-    // TODO insert, update, delete
     // sql이랑 param 주입하는 함수형 인터페이스 구현시킨담에 jdbc 템플릿에 실행관련 작업들 위임함.
     public final JdbcTemplate<User> jdbcTemplate = new JdbcTemplate();
 
 
-    public void insert(User user) throws SQLException {
+    public void insert(User user) {
         String sql = "INSERT INTO USERS VALUES (?, ?, ?, ?)";
         PreparedStatementSetter pss = pstmt -> {
             pstmt.setString(1, user.getUserId());
@@ -24,7 +23,7 @@ public class UserDao {
         jdbcTemplate.update(sql, pss);
     }
 
-    public void update(User user) throws SQLException {
+    public void update(User user) {
         String sql = "UPDATE USERS SET password =?, name =?, email =? WHERE userId =?";
         PreparedStatementSetter pstmtSetter = pstmt -> {
             pstmt.setString(1, user.getPassword());
@@ -35,7 +34,7 @@ public class UserDao {
         jdbcTemplate.update(sql, pstmtSetter);
     }
 
-    public void delete(User user) throws SQLException {
+    public void delete(User user)  {
         String sql = "DELETE FROM USERS WHERE userId =?";
         PreparedStatementSetter pss = pstmt -> {
             pstmt.setString(1, user.getUserId());
@@ -43,9 +42,7 @@ public class UserDao {
         jdbcTemplate.update(sql, pss);
     }
 
-    // TODO findAll, findByUserId (select 조회)
-
-    public List<User> findAll() throws SQLException {
+    public List<User> findAll()  {
         String sql = "SELECT * FROM USERS";
         RowMapper rowMapper = rs -> new User(rs.getString("userId"),
                 rs.getString("password"),
@@ -55,7 +52,7 @@ public class UserDao {
         return jdbcTemplate.query(sql, rowMapper);
     }
 
-    public User findByUserId(String userId) throws SQLException {
+    public User findByUserId(String userId) {
         String sql = "SELECT * FROM USERS WHERE userId=?";
         PreparedStatementSetter pstmtSetter = pstmt -> {
             pstmt.setString(1, userId);
