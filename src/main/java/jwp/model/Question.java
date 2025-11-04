@@ -1,11 +1,19 @@
 package jwp.model;
 
+import lombok.NoArgsConstructor;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Objects;
 
+@Entity
+@Table(name = "QUESTIONS")
+@NoArgsConstructor
 public class Question {
-
+    @Id
     private int questionId;
     private String writer;
     private String title;

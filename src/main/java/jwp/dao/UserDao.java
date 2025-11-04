@@ -1,68 +1,34 @@
 package jwp.dao;
 
-import core.jdbc.JdbcTemplate;
-import core.jdbc.PreparedStatementSetter;
-import core.jdbc.RowMapper;
 import jwp.model.User;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
-import java.sql.SQLException;
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import java.util.List;
 
+@Repository
+@RequiredArgsConstructor // lombok -> final 키워드 생성자들을 자동으로 만들어 줌.
 public class UserDao {
 
-    private final JdbcTemplate<User> jdbcTemplate = new JdbcTemplate<>();
+    private final EntityManager em;
 
-    public void insert(User user) throws SQLException {
-        String sql = "INSERT INTO USERS VALUES (?, ?, ?, ?)";
-        PreparedStatementSetter pstmtSetter = pstmt -> {
-            pstmt.setString(1, user.getUserId());
-            pstmt.setString(2, user.getPassword());
-            pstmt.setString(3, user.getName());
-            pstmt.setString(4, user.getEmail());
-        };
-        jdbcTemplate.update(sql, pstmtSetter);
+
+    @Transactional
+    public void insert(User user) {
+        em.persist(user);
     }
 
-    public void update(User user) throws SQLException {
-        String sql = "UPDATE USERS SET password = ?, name = ?, email = ? WHERE userId = ?";
-        PreparedStatementSetter pstmtSetter = pstmt -> {
-            pstmt.setString(1, user.getPassword());
-            pstmt.setString(2, user.getName());
-            pstmt.setString(3, user.getEmail());
-            pstmt.setString(4, user.getUserId());
-        };
-        jdbcTemplate.update(sql, pstmtSetter);
+    public void update(User user) {
+        em.merge(user);
     }
 
-    public void delete(User user) throws SQLException {
-        String sql = "DELETE FROM USERS WHERE userId = ?";
-        PreparedStatementSetter pstmtSetter = pstmt -> {
-            pstmt.setString(1, user.getUserId());
-        };
-        jdbcTemplate.update(sql, pstmtSetter);
+    public List<User> findAll() {
+        return em.createQuery("select u From User u", User.class).getResultList();
     }
 
-    public List<User> findAll() throws SQLException {
-        String sql = "SELECT * FROM USERS";
-        RowMapper rowMapper = rs -> new User(rs.getString("userId"),
-                rs.getString("password"),
-                rs.getString("name"),
-                rs.getString("email"));
-        return jdbcTemplate.query(sql, rowMapper);
-    }
-
-    public User findByUserId(String userId) throws SQLException {
-        String sql = "SELECT userId, password, name, email FROM USERS WHERE userId=?";
-
-        PreparedStatementSetter pstmtSetter = pstmt -> {
-            pstmt.setString(1, userId);
-        };
-
-        RowMapper rowMapper = rs -> new User(rs.getString("userId"),
-                rs.getString("password"),
-                rs.getString("name"),
-                rs.getString("email"));
-
-        return jdbcTemplate.queryForObject(sql, pstmtSetter, rowMapper);
+    public User findByUserId(String userId) {
+        return em.find(User.class, userId);
     }
 }
