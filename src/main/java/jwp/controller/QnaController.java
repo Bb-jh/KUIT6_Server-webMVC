@@ -26,11 +26,12 @@ public class QnaController {
     }
 
     @GetMapping("/updateForm")
-    public String updateForm(@RequestParam int questionId, HttpSession session) throws Exception {
+    public String updateForm(@RequestParam int questionId, HttpSession session, Model model) throws Exception {
         if (!UserSessionUtils.isLogined(session)) {          // 회원만 질문 등록 가능
             return "redirect:/user/loginForm";
         }
         Question question = questionDao.findByQuestionId(questionId);
+        model.addAttribute("question", question);
         User user = UserSessionUtils.getUserFromSession(session);
 
         if (!question.isSameUser(user)) {
