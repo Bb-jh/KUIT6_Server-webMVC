@@ -17,7 +17,7 @@ import javax.servlet.http.HttpSession;
 public class QnaController {
     private final QuestionDao questionDao;
 
-    @PostMapping("/form")
+    @GetMapping("/form")
     public String createForm(HttpSession session) throws Exception {
         if (UserSessionUtils.isLogined(session)) {          // 회원만 질문 등록 가능
             return "qna/form";
@@ -40,6 +40,11 @@ public class QnaController {
         return "qna/updateForm";
     }
 
+    @GetMapping("/delete")
+    public String delete(@RequestParam int questionId, HttpSession session) throws Exception {
+        questionDao.delete(questionId);
+        return "redirect:/";
+    }
 
     @PostMapping("/update")
     public String update(@ModelAttribute Question reqQuestion, HttpSession session) throws Exception {
@@ -49,6 +54,12 @@ public class QnaController {
 
         User user = UserSessionUtils.getUserFromSession(session);
         Question question = questionDao.findByQuestionId(reqQuestion.getQuestionId());
+
+        System.out.println(question.getQuestionId());
+        System.out.println(question.getWriter());
+        System.out.println(question.getTitle());
+        System.out.println(question.getContents());
+
         if (!question.isSameUser(user)) {
             throw new IllegalArgumentException("로그인된 유저와 질문 작성자가 다르면 질문을 수정할 수 없습니다.");
         }

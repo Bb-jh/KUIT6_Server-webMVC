@@ -18,13 +18,14 @@ public class QuestionDao {
     public Question insert(Question question) throws SQLException {
         em.persist(question);
         return question;
-
     }
 
+    @Transactional
     public void update(Question question) throws SQLException {
         em.merge(question);
     }
 
+    @Transactional
     public void delete(int questionId) throws SQLException {
         Question question = em.find(Question.class, questionId);
         if (question != null) {

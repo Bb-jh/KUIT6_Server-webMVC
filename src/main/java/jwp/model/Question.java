@@ -1,10 +1,10 @@
 package jwp.model;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -12,14 +12,25 @@ import java.util.Objects;
 @Entity
 @Table(name = "QUESTIONS")
 @NoArgsConstructor
+@Getter
+@Setter
 public class Question {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int questionId;
     private String writer;
     private String title;
     private String contents;
     private Date createdDate;
     private int countOfAnswer;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.createdDate == null) {
+            this.createdDate = Date.valueOf(LocalDate.now());
+        }
+    }
+
 
     public Question(int questionId, String writer, String title, String contents, Date createdDate, int countOfAnswer) {
         this.questionId = questionId;
@@ -37,30 +48,6 @@ public class Question {
         this.contents = contents;
         this.createdDate = Date.valueOf(LocalDate.now());
         this.countOfAnswer = countOfAnswer;
-    }
-
-    public int getQuestionId() {
-        return questionId;
-    }
-
-    public String getWriter() {
-        return writer;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public int getCountOfAnswer() {
-        return countOfAnswer;
     }
 
     public void updateTitleAndContents(String title, String contents) {
