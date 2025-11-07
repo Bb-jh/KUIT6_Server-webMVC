@@ -18,10 +18,10 @@ public class UserController {
 
     @PostMapping("/signup")
     public String createUser(@ModelAttribute User user) throws Exception {
-        System.out.println("user = " + user);
+/*        System.out.println("user = " + user);
         System.out.println("userId = " + user.getUserId());
         System.out.println("password = " + user.getPassword());
-        System.out.println("name = " + user.getName());
+        System.out.println("name = " + user.getName());*/
         userDao.insert(user);
         System.out.println("user 회원가입 완료");
         return "redirect:/user/list";
@@ -38,7 +38,6 @@ public class UserController {
     }
 
 
-
     @PostMapping("/login")
     public String login(@RequestParam String userId, @RequestParam String password, HttpSession session) throws Exception {
         User loginUser = new User(userId, password);
@@ -51,15 +50,24 @@ public class UserController {
         return "redirect:/user/loginFailed";
     }
 
+    @GetMapping("/login")
+    public String login(HttpSession session) throws Exception {
+        return "user/login";
+    }
+
     @GetMapping("/logout")
     public String logout(HttpSession session) throws Exception {
         session.removeAttribute("user");
         return "redirect:/";
     }
 
-
+    // update, 회원가입 중복 튕김, question 수정,삭제,등록안됨
     @PostMapping("/update")
     public String update(@ModelAttribute User modifiedUser) throws Exception {
+/*        System.out.println(modifiedUser.getUserId());
+        System.out.println(modifiedUser.getName());
+        System.out.println(modifiedUser.getPassword());
+        System.out.println(modifiedUser.getEmail());*/
         userDao.update(modifiedUser);
         return "redirect:/user/list";
     }

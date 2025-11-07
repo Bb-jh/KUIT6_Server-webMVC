@@ -20,6 +20,7 @@ public class UserDao {
         em.persist(user);
     }
 
+    @Transactional
     public void update(User user) {
         em.merge(user);
     }
